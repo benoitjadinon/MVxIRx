@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MvvmCross.Binding.BindingContext;
 using MvvmCross.Forms.Views;
+using MvvmCross.Forms.Bindings;
 using MVxIRx.Core.ViewModels.Home;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -22,11 +25,23 @@ namespace MVxIRx.UI.Pages
         {
             base.OnAppearing();
 
-            if (Application.Current.MainPage is NavigationPage navigationPage)
+            /*if (Application.Current.MainPage is NavigationPage navigationPage)
             {
                 navigationPage.BarTextColor = Color.White;
                 navigationPage.BarBackgroundColor = (Color)Application.Current.Resources["PrimaryColor"];
-            }
+            }*/
+
+            // bindings
+
+            var set = this.CreateBindingSet<HomePage, HomeViewModel>();
+            set.Bind(label)
+                .For(v => v.Text)
+                .To(vm => vm.State.Title);
+            set.Apply();
+
+            // or
+
+            ViewModel.StateObservable.Subscribe(state => Debug.WriteLine(state));
         }
     }
 }

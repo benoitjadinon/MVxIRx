@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <views:MvxContentPage 
     x:TypeArguments="viewModels:HomeViewModel"
     xmlns="http://xamarin.com/schemas/2014/forms"
@@ -11,9 +11,10 @@
     Title="Main page">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome!!&#10;App scaffolded with MvxScaffolding"
+            <Label x:Name="label"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
+            <Button x:Name="butt" />
         </StackLayout>
     </ContentPage.Content>
 </views:MvxContentPage>
