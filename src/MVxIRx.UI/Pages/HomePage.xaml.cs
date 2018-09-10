@@ -35,9 +35,9 @@ namespace MVxIRx.UI.Pages
             // bindings
 
             var set = this.CreateBindingSet<HomePage, HomeViewModel>();
-            set.Bind(label)
+            set.Bind(butt)
                 .For(v => v.Text)
-                .To(vm => vm.State.Title);
+                .To(vm => vm.State.ButtonLabel);
             set.Apply();
 
             // or rx updates
@@ -46,7 +46,8 @@ namespace MVxIRx.UI.Pages
                 .Do(state => Debug.WriteLine(state))
                 .Subscribe(state =>
                 {
-                    //label.Text = state.Title;
+                    Title = state.Title;
+                    //butt.Text = state.ButtonLabel;
                 });
         }
     }

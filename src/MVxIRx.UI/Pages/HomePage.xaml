@@ -11,10 +11,11 @@
     Title="Main page">
     <ContentPage.Content>
         <StackLayout>
-            <Label x:Name="label"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-            <Button x:Name="butt" />
+            <Button x:Name="butt"
+                VerticalOptions="Center" 
+                HorizontalOptions="CenterAndExpand"
+                Text="ez"
+                />
         </StackLayout>
     </ContentPage.Content>
 </views:MvxContentPage>

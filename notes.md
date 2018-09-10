@@ -31,30 +31,25 @@
     - each property updates the view at own time
         - refresh after an error : loading == true AND error != nil
 
-- combinelatest(sink1, othersink).subscribe(stateBehaviorSubject);
+- use combinelatest in vm to reduce the number of setState calls
+	- combinelatest(bloc1.sink1, bloc2.othersink).subscribe(setState);
 
 - ViewState is a statemachine ?
 
-- les views sont testables avec des states tout faits, c'est juste des valeurs dans un POCO
-    - un viewmodel est bcp plus chaud à faker, car il contient souvent de la logique business (et c'est mal)
+- views are testable with hardcoded states, to work on ui before having business logic
+    - a viewmodel is harder to fake, and usually contains business logic (and shouldn't)
 
-- idée pour pas avoir de présenter mais une sorte de presenter-bloc-vm ?
-    
-    - `BaseStateBloc<T:MonState>`
-        - `RenderStream<T> { get };`
-
-    - `HomePresenterBloc<HomeState> : BaseStateBloc`
-        - `RefreshSink(blah);`
-    
-    - inconvénient : la vue doit subsribe sur le render mais c'est le seul truc qu'elle a à faire
-
-    - ViewState [ios-architecture-an-state-container-based-approach](https://jobandtalent.engineering/ios-architecture-an-state-container-based-approach-4f1a9b00b82e)
+- ViewState [ios-architecture-an-state-container-based-approach](https://jobandtalent.engineering/ios-architecture-an-state-container-based-approach-4f1a9b00b82e)
 
 - `AppModel<AppState> ??
     AppState{
-        isLoggedIn ? -> trigger l'affichage de authcontroller ?
+        isLoggedIn ? -> triggers show some auth screen ?
     }`
-	- comme ça, on peut mocker et aller direct où il faut
+	- so that even the nav is mockable, and can show directly one specific screen
+	- `userBloc.onUserObs.Where(u => u == null).Subscribe(app.showLoginPage());`
+		- logout : `userBloc.logout() => user = null;` : will show the login screen
+
+- TODO : debug.writeline a state could show hierarchy and values
 
 ##Pseudo-code
 ```csharp

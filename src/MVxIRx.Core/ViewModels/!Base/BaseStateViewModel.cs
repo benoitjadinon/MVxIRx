@@ -19,13 +19,11 @@ namespace MVxIRx.Core.ViewModels
         {
             get
             {
-                if (_statesHistory.Count == 0)
-                {
-                    var state = (TState)Activator.CreateInstance(typeof(TState));
-                    _statesHistory.Enqueue(state);
-                    return state;
-                }
-                return _statesHistory.Last();
+                if (_statesHistory.Count > 0)
+                    return GetLastState();
+                var state = (TState)Activator.CreateInstance(typeof(TState));
+                _statesHistory.Enqueue(state);
+                return state;
             }
             private set
             {
@@ -55,10 +53,13 @@ namespace MVxIRx.Core.ViewModels
         public void SetState(TState state)
             => State = state;
 
-        public void SetState<TO>(Expression<Func<TState, TO>> stateProperty, TO @value)
-            => SetState(stateProperty)(@value);
+        public void SetStateProperties(Func<TState, TState> stateAction)
+            => SetState(stateAction(State.Copy()));
 
-        public Action<TO> SetState<TO>(Expression<Func<TState, TO>> stateProperty)
+        public void SetStateProperty<TO>(Expression<Func<TState, TO>> stateProperty, TO @value)
+            => SetStateProperty(stateProperty)(@value);
+
+        public Action<TO> SetStateProperty<TO>(Expression<Func<TState, TO>> stateProperty)
         {
             return @value =>
             {
@@ -72,6 +73,9 @@ namespace MVxIRx.Core.ViewModels
                 State = newState;
             };
         }
+
+        public TState GetLastState()
+            => _statesHistory.Last();
 
         public IEnumerable<TState> GetLastStates(int lastStatesCount = 4)
             => _statesHistory.Skip(Math.Max(0, _statesHistory.Count - Math.Min(lastStatesCount, Math.Min(_statesHistoryLength, _statesHistory.Count))));
