@@ -14,19 +14,19 @@ namespace MVxIRx.Core.ViewModels.Home
             Observable.Return(new HomeViewModelState { Title = "B" })
                 .Delay(TimeSpan.FromSeconds(3))
                 .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(UpdateState)
+                .Subscribe(SetState)
                 ;
 
             // update state property
             Observable.Return("C")
                 .Delay(TimeSpan.FromSeconds(5))
                 .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(UpdateState(s => s.Title))
+                .Subscribe(SetState(s => s.Title))
                 ;
 
-            //UpdateState(s => s.Title, "yo");
+            //SetState(s => s.Title, "yo");
 
-            //UpdateState(new HomeState());
+            //SetState(new HomeState());
         }
     }
 

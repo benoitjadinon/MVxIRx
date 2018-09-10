@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MvvmCross.Binding.BindingContext;
@@ -39,9 +40,14 @@ namespace MVxIRx.UI.Pages
                 .To(vm => vm.State.Title);
             set.Apply();
 
-            // or
+            // or rx updates
 
-            ViewModel.StateObservable.Subscribe(state => Debug.WriteLine(state));
+            ViewModel.StateObservable
+                .Do(state => Debug.WriteLine(state))
+                .Subscribe(state =>
+                {
+                    //label.Text = state.Title;
+                });
         }
     }
 }

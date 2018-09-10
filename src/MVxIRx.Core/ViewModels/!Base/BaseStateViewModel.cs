@@ -52,13 +52,13 @@ namespace MVxIRx.Core.ViewModels
         }
 
 
-        public void UpdateState(TState state)
+        public void SetState(TState state)
             => State = state;
 
-        public void UpdateState<TO>(Expression<Func<TState, TO>> stateProperty, TO @value)
-            => UpdateState(stateProperty)(@value);
+        public void SetState<TO>(Expression<Func<TState, TO>> stateProperty, TO @value)
+            => SetState(stateProperty)(@value);
 
-        public Action<TO> UpdateState<TO>(Expression<Func<TState, TO>> stateProperty)
+        public Action<TO> SetState<TO>(Expression<Func<TState, TO>> stateProperty)
         {
             return @value =>
             {
