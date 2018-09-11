@@ -33,23 +33,24 @@ namespace MVxIRx.UI.Pages
                 navigationPage.BarBackgroundColor = (Color)Application.Current.Resources["PrimaryColor"];
             }*/
 
-            // bindings
+            // MVVM bindings
 
             var set = this.CreateBindingSet<HomePage, HomeViewModel>();
             set.Bind(butt)
                 .For(v => v.Text)
-                .To(vm => vm.State.ButtonLabel);
+                .To(vm => vm.State.ButtonLabel); // bindings don't work with fields in states, only with public properties
             set.Apply();
 
             // or rx updates
-
+            /*
             ViewModel.StateObservable
                 .Do(state => Debug.WriteLine(state))
                 .Subscribe(state =>
                 {
                     Title = state.Title;
-                    //butt.Text = state.ButtonLabel;
+                    butt.Text = state.ButtonLabel;
                 });
+            */
         }
     }
 }

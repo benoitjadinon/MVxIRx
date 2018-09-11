@@ -73,13 +73,10 @@ namespace MVxIRx.Core.ViewModels
     }
 
     // The States POCO
-    // TODO consider using structs (immutable) ?
-    // TODO but they can only be created (not changed) from their constructors
-    // TODO that would actually force grouping multiple smaller states
-    // TODO and force using real states which may not be a bad thing
     public struct HomeViewModelState
     {
-        public readonly string Title, ButtonLabel;
+        public string Title { get; private set; }
+        public string ButtonLabel { get; private set; }
 
         public HomeViewModelState(Exception error)
         {
@@ -95,4 +92,7 @@ namespace MVxIRx.Core.ViewModels
 
         public override string ToString() => Title;
     }
+
+    // can't do that
+    //public struct SuperHomeViewModelState : HomeViewModelState {}
 }

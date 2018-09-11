@@ -49,7 +49,8 @@ namespace MVxIRx.Core
             SetState(CreateFirstState());
         }
 
-        protected virtual TState CreateFirstState() => (TState)Activator.CreateInstance(typeof(TState));
+        protected virtual TState CreateFirstState()
+            => (TState)Activator.CreateInstance(typeof(TState));
 
         /*
         public void SetStateProperties(Func<TState, TState> stateAction)
@@ -78,7 +79,7 @@ namespace MVxIRx.Core
             => _stateSubject.OnNext(state);
 
         public TState GetLastState()
-            => _statesHistory.LastOrDefault();// ?? CreateFirstState();
+            => _statesHistory.Last();// ?? CreateFirstState();
 
         public IEnumerable<TState> GetLastStates(int lastStatesCount = 4)
             => _statesHistory.Skip(Math.Max(0, _statesHistory.Count - Math.Min(lastStatesCount, Math.Min(_statesHistoryLength, _statesHistory.Count))));
