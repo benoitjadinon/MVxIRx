@@ -52,7 +52,6 @@ namespace MVxIRx.Core
         protected virtual TState CreateFirstState()
             => (TState)Activator.CreateInstance(typeof(TState));
 
-        /*
         public void SetStateProperties(Func<TState, TState> stateAction)
             => SetState(stateAction(GetLastState().Copy()));
 
@@ -73,7 +72,6 @@ namespace MVxIRx.Core
                 SetState(newState);
             };
         }
-        */
 
         public void SetState(TState state)
             => _stateSubject.OnNext(state);

@@ -36,11 +36,11 @@ namespace MVxIRx.Core.ViewModels
                 ;
 
             // update only one state property
-            /*Observable.Return("C")
+            Observable.Return("C")
                 .Delay(TimeSpan.FromSeconds(5))
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(SetStateProperty(s => s.Title))
-                ;*/
+                ;
 
             // other one-property syntax
             //SetStateProperty(s => s.ButtonLabel, "Click Me !!!");
