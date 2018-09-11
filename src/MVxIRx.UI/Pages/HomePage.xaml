@@ -7,14 +7,13 @@
     xmlns:mvx="clr-namespace:MvvmCross.Forms.Bindings;assembly=MvvmCross.Forms"
     xmlns:local="clr-namespace:MVxIRx.UI.Pages"
     x:Class="MVxIRx.UI.Pages.HomePage"
-    xmlns:viewModels="clr-namespace:MVxIRx.Core.ViewModels.Home;assembly=MVxIRx.Core"
+    xmlns:viewModels="clr-namespace:MVxIRx.Core.ViewModels;assembly=MVxIRx.Core"
     Title="Main page">
     <ContentPage.Content>
         <StackLayout>
             <Button x:Name="butt"
                 VerticalOptions="Center" 
                 HorizontalOptions="CenterAndExpand"
-                Text="ez"
                 />
         </StackLayout>
     </ContentPage.Content>

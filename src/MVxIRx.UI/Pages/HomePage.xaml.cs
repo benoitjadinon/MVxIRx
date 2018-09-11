@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 using MvvmCross.Binding.BindingContext;
 using MvvmCross.Forms.Views;
 using MvvmCross.Forms.Bindings;
-using MVxIRx.Core.ViewModels.Home;
+using MVxIRx.Core;
+using MVxIRx.Core.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

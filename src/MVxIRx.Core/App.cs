@@ -1,6 +1,6 @@
 ﻿using MvvmCross.IoC;
 using MvvmCross.ViewModels;
-using MVxIRx.Core.ViewModels.Home;
+using MVxIRx.Core.ViewModels;
 
 namespace MVxIRx.Core
 {

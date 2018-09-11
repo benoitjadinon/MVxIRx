@@ -1,15 +1,32 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
+using MVxIRx.Core.ViewModels;
 
-namespace MVxIRx.Core.ViewModels.Home
+// ViewModel(ViewModelBloc(ViewModelState))
+namespace MVxIRx.Core.ViewModels
 {
-    public class HomeViewModel : BaseStateViewModel<HomeViewModelState>
+    // ViewModel : placeholder for the bloc and target for mvvmcross's viewmodel-based navigation
+    public class HomeViewModel : BaseStatefulViewModel<HomeViewModelBloc, HomeViewModelState>, IHomeViewModelBloc
     {
-        public override async Task Initialize()
+        public void OpenDetails() => Bloc.OpenDetails();
+
+        //protected override HomeViewModelBloc CreateBloc() => new HomeViewModelBloc(xxx);
+    }
+
+    // ViewModel Bloc Interface : (not mandatory) contains the State output, and other input methods
+    public interface IHomeViewModelBloc : IStatefulBloc<HomeViewModelState>
+    {
+        void OpenDetails();
+    }
+
+    // ViewModel Bloc : use to combine blocs into one testable 'viewmodel' bloc,
+    // so there is no logic in the viewmodel
+    public class HomeViewModelBloc : StatefulBloc<HomeViewModelState>, IHomeViewModelBloc
+    {
+        //protected override HomeViewModelState CreateFirstState() => new HomeViewModelState();
+
+        public HomeViewModelBloc()
         {
             // update the whole state
             Observable.Return(new HomeViewModelState { Title = "B" })
@@ -50,18 +67,26 @@ namespace MVxIRx.Core.ViewModels.Home
             });
             */
         }
+
+        // send to a stateful bloc that may be listened by a global mvvmcross navigator
+        public void OpenDetails() => throw new NotImplementedException();
     }
 
+    // The States POCO
+    // TODO consider using structs (immutable) ?
+    // TODO but they can only be created (not changed) from their constructors
+    // TODO that would actually force grouping multiple smaller states
+    // TODO and force using real states which may not be a bad thing
     public class HomeViewModelState
     {
         public string Title { get; set; } = "...";
-        public string ButtonLabel { get; set; } = "Click Me !";
+        public string ButtonLabel { get; set; } = "-";
 
         public HomeViewModelState() {}
 
         public HomeViewModelState(Exception error)
         {
-            Title = "Error";
+            Title = $"Error {error?.Message ?? string.Empty}";
             ButtonLabel = "Retry";
         }
 

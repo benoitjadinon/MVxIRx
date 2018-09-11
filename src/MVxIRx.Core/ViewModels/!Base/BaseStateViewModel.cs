@@ -8,76 +8,35 @@ using System.Reflection;
 
 namespace MVxIRx.Core.ViewModels
 {
-    public class BaseStateViewModel<TState> : BaseViewModel
+    public abstract class BaseStatefulViewModel<TBloc, TState> : BaseViewModel, IHasState<TState>
         where TState : class
+        where TBloc : class, IStatefulBloc<TState>
     {
-        readonly int _statesHistoryLength;
-        private readonly Queue<TState> _statesHistory; //TODO: thread safe
-        public readonly IObservable<TState> StateObservable;
+        private TBloc _bloc;
+        protected TBloc Bloc => _bloc ?? (_bloc = CreateBloc());
+        protected virtual TBloc CreateBloc() => (TBloc)Activator.CreateInstance(typeof(TBloc));
 
+        public IObservable<TState> StateObservable { get; }
+
+        private TState _state;
         public TState State
         {
-            get
+            get => _state;
+            protected set
             {
-                if (_statesHistory.Count > 0)
-                    return GetLastState();
-                var state = (TState)Activator.CreateInstance(typeof(TState));
-                _statesHistory.Enqueue(state);
-                return state;
-            }
-            private set
-            {
-                if (_statesHistory.Count >= _statesHistoryLength)
-                    _statesHistory.Dequeue();
-                _statesHistory.Enqueue(value);
+                _state = value;
                 RaisePropertyChanged(() => State);
             }
         }
 
-        protected BaseStateViewModel(int statesHistoryLength = 4)
+        public BaseStatefulViewModel()
         {
-            _statesHistoryLength = statesHistoryLength;
-            _statesHistory = new Queue<TState>(statesHistoryLength);
+            StateObservable = Bloc.StateObservable;
 
-            StateObservable = Observable.Defer(() => Observable.Return(State))
-                .Merge(Observable
-                    .FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
-                        h => this.PropertyChanged += h,
-                        h => this.PropertyChanged -= h)
-                    .Where(args => args.EventArgs.PropertyName == nameof(State))
-                    .Select(_ => State)
-                );
+            //TODO : only subscribe if state is bound ? possible ?
+            StateObservable
+                .Subscribe(state => State = state)
+                ;
         }
-
-
-        public void SetState(TState state)
-            => State = state;
-
-        public void SetStateProperties(Func<TState, TState> stateAction)
-            => SetState(stateAction(State.Copy()));
-
-        public void SetStateProperty<TO>(Expression<Func<TState, TO>> stateProperty, TO @value)
-            => SetStateProperty(stateProperty)(@value);
-
-        public Action<TO> SetStateProperty<TO>(Expression<Func<TState, TO>> stateProperty)
-        {
-            return @value =>
-            {
-                var memberExpression = (MemberExpression)stateProperty.Body;
-                var property = (PropertyInfo)memberExpression.Member;
-
-                TState newState = State.Copy();
-
-                property.SetValue(newState, @value, null);
-
-                State = newState;
-            };
-        }
-
-        public TState GetLastState()
-            => _statesHistory.Last();
-
-        public IEnumerable<TState> GetLastStates(int lastStatesCount = 4)
-            => _statesHistory.Skip(Math.Max(0, _statesHistory.Count - Math.Min(lastStatesCount, Math.Min(_statesHistoryLength, _statesHistory.Count))));
     }
 }
