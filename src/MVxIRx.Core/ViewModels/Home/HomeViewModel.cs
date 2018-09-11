@@ -29,21 +29,21 @@ namespace MVxIRx.Core.ViewModels
         public HomeViewModelBloc()
         {
             // update the whole state
-            Observable.Return(new HomeViewModelState { Title = "B" })
+            Observable.Return(new HomeViewModelState("B", "Click"))
                 .Delay(TimeSpan.FromSeconds(3))
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(SetState)
                 ;
 
             // update only one state property
-            Observable.Return("C")
+            /*Observable.Return("C")
                 .Delay(TimeSpan.FromSeconds(5))
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(SetStateProperty(s => s.Title))
-                ;
+                ;*/
 
             // other one-property syntax
-            SetStateProperty(s => s.ButtonLabel, "Click Me !!!");
+            //SetStateProperty(s => s.ButtonLabel, "Click Me !!!");
 
             // updates multiple properties at once but will only call setstate() 1 time
             /*
@@ -77,12 +77,9 @@ namespace MVxIRx.Core.ViewModels
     // TODO but they can only be created (not changed) from their constructors
     // TODO that would actually force grouping multiple smaller states
     // TODO and force using real states which may not be a bad thing
-    public class HomeViewModelState
+    public struct HomeViewModelState
     {
-        public string Title { get; set; } = "...";
-        public string ButtonLabel { get; set; } = "-";
-
-        public HomeViewModelState() {}
+        public readonly string Title, ButtonLabel;
 
         public HomeViewModelState(Exception error)
         {
@@ -90,10 +87,10 @@ namespace MVxIRx.Core.ViewModels
             ButtonLabel = "Retry";
         }
 
-        public HomeViewModelState(object data)
+        public HomeViewModelState(string title, string butt)
         {
-            Title = "OK";
-            ButtonLabel = "Next";
+            Title = title;
+            ButtonLabel = butt;
         }
 
         public override string ToString() => Title;

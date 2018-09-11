@@ -10,19 +10,19 @@ using System.Reflection;
 namespace MVxIRx.Core
 {
     public interface IHasState<TState>
-        where TState : class
+        where TState : struct
     {
         //TState State { get; }
         IObservable<TState> StateObservable { get; }
     }
 
     public interface IStatefulBloc<TState> : IHasState<TState>
-        where TState : class
+        where TState : struct
     {
     }
 
     public abstract class StatefulBloc<TState> : IStatefulBloc<TState>
-        where TState : class
+        where TState : struct
     {
         private readonly int _statesHistoryLength;
         private readonly Queue<TState> _statesHistory; //TODO: thread safe
@@ -46,11 +46,12 @@ namespace MVxIRx.Core
             });
 
             //TODO : what if there would be none set by default ?
-            //SetState(CreateFirstState());
+            SetState(CreateFirstState());
         }
 
         protected virtual TState CreateFirstState() => (TState)Activator.CreateInstance(typeof(TState));
 
+        /*
         public void SetStateProperties(Func<TState, TState> stateAction)
             => SetState(stateAction(GetLastState().Copy()));
 
@@ -71,12 +72,13 @@ namespace MVxIRx.Core
                 SetState(newState);
             };
         }
+        */
 
         public void SetState(TState state)
             => _stateSubject.OnNext(state);
 
         public TState GetLastState()
-            => _statesHistory.LastOrDefault() ?? CreateFirstState();
+            => _statesHistory.LastOrDefault();// ?? CreateFirstState();
 
         public IEnumerable<TState> GetLastStates(int lastStatesCount = 4)
             => _statesHistory.Skip(Math.Max(0, _statesHistory.Count - Math.Min(lastStatesCount, Math.Min(_statesHistoryLength, _statesHistory.Count))));

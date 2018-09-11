@@ -9,7 +9,7 @@ using System.Reflection;
 namespace MVxIRx.Core.ViewModels
 {
     public abstract class BaseStatefulViewModel<TBloc, TState> : BaseViewModel, IHasState<TState>
-        where TState : class
+        where TState : struct
         where TBloc : class, IStatefulBloc<TState>
     {
         private TBloc _bloc;
