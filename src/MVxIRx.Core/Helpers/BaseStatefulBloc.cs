@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Linq;
@@ -13,7 +14,7 @@ namespace MVxIRx.Core
         where TState : class
     {
         //TState State { get; }
-        IObservable<TState> StateObservable { get; }
+        IObservable<TState> StateObs { get; }
     }
 
     public interface IStatefulBloc<TState> : IHasState<TState>
@@ -21,43 +22,47 @@ namespace MVxIRx.Core
     {
     }
 
-    public abstract class StatefulBloc<TState> : IStatefulBloc<TState>
+    //public abstract class BaseStatefulBloc : BaseStatefulBloc<object>{}
+
+    public abstract class BaseStatefulBloc<TState> : IStatefulBloc<TState>
         where TState : class
     {
         private readonly int _statesHistoryLength;
         private readonly Queue<TState> _statesHistory; //TODO: thread safe
 
         private readonly ReplaySubject<TState> _stateSubject;
-        public IObservable<TState> StateObservable { get; private set; }
+        public IObservable<TState> StateObs { get; private set; }
 
-        protected StatefulBloc(int statesHistoryLength = 4)
+        protected BaseStatefulBloc(TState initialState = null, int statesHistoryLength = 4)
         {
             _statesHistoryLength = statesHistoryLength;
             _statesHistory = new Queue<TState>(statesHistoryLength);
 
             _stateSubject = new ReplaySubject<TState>(1);
-            StateObservable = _stateSubject.AsObservable();
+            StateObs = _stateSubject.AsObservable();
 
             _stateSubject.Subscribe(state =>
             {
+                Debug.WriteLine($"State Added in {this.GetType().Name}:{state.GetType().Name} => {state.ToString()}");
                 if (_statesHistory.Count >= _statesHistoryLength)
                     _statesHistory.Dequeue();
                 _statesHistory.Enqueue(state);
             });
 
-            //TODO : what if there would be none set by default ?
-            //SetState(CreateFirstState());
+            //TODO : what if there would be none set by default ? bindings would fail ?
+            //SetState(CreateInitialState());
+
+            if (initialState != null)
+                SetState(initialState);
         }
 
-        protected virtual TState CreateFirstState() => (TState)Activator.CreateInstance(typeof(TState));
-
-        public void SetStateProperties(Func<TState, TState> stateAction)
+        public void UpdateState(Func<TState, TState> stateAction)
             => SetState(stateAction(GetLastState().Copy()));
 
-        public void SetStateProperty<TO>(Expression<Func<TState, TO>> stateProperty, TO @value)
-            => SetStateProperty(stateProperty)(@value);
+        public void UpdateState<TO>(Expression<Func<TState, TO>> stateProperty, TO @value)
+            => UpdateState(stateProperty)(@value);
 
-        public Action<TO> SetStateProperty<TO>(Expression<Func<TState, TO>> stateProperty)
+        public Action<TO> UpdateState<TO>(Expression<Func<TState, TO>> stateProperty)
         {
             return @value =>
             {
@@ -72,11 +77,24 @@ namespace MVxIRx.Core
             };
         }
 
+        public void SetState()
+            => SetState<TState>();
+
+        public void SetState<T>()
+            where T:TState
+            => SetState((T)Activator.CreateInstance(typeof(T)));
+
         public void SetState(TState state)
             => _stateSubject.OnNext(state);
 
         public TState GetLastState()
-            => _statesHistory.LastOrDefault() ?? CreateFirstState();
+            => _statesHistory.LastOrDefault() ?? CreateInitialState();
+
+        protected virtual TState CreateInitialState()
+        {
+            SetState<TState>();
+            return _statesHistory.LastOrDefault();
+        }
 
         public IEnumerable<TState> GetLastStates(int lastStatesCount = 4)
             => _statesHistory.Skip(Math.Max(0, _statesHistory.Count - Math.Min(lastStatesCount, Math.Min(_statesHistoryLength, _statesHistory.Count))));

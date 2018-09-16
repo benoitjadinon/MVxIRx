@@ -7,14 +7,19 @@
     xmlns:mvx="clr-namespace:MvvmCross.Forms.Bindings;assembly=MvvmCross.Forms"
     xmlns:local="clr-namespace:MVxIRx.UI.Pages"
     x:Class="MVxIRx.UI.Pages.HomePage"
-    xmlns:viewModels="clr-namespace:MVxIRx.Core.ViewModels;assembly=MVxIRx.Core"
-    Title="Main page">
+    xmlns:viewModels="clr-namespace:MVxIRx.Core.ViewModels.Home;assembly=MVxIRx.Core"
+    Title="Home">
     <ContentPage.Content>
         <StackLayout>
-            <Button x:Name="butt"
-                VerticalOptions="Center" 
-                HorizontalOptions="CenterAndExpand"
-                />
+            <Button x:Name="OpenDetailsButt"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="CenterAndExpand"
+                    />
+            <Button x:Name="LogOutButt"
+                    Text="Log Out"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="CenterAndExpand"
+            />
         </StackLayout>
     </ContentPage.Content>
 </views:MvxContentPage>

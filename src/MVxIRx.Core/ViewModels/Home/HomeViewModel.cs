@@ -1,33 +1,39 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Threading;
-using MVxIRx.Core.ViewModels;
+using MVxIRx.Core.ViewModels.Login;
 
 // ViewModel(ViewModelBloc(ViewModelState))
-namespace MVxIRx.Core.ViewModels
+namespace MVxIRx.Core.ViewModels.Home
 {
     // ViewModel : placeholder for the bloc and target for mvvmcross's viewmodel-based navigation
-    public class HomeViewModel : BaseStatefulViewModel<HomeViewModelBloc, HomeViewModelState>, IHomeViewModelBloc
+    public class HomeViewModel : BaseStatefulViewModel<IHomeViewModelBloc, HomeViewModelState>, IHomeViewModelBloc
     {
+        //TODO : Sinks : ReactiveCommand or ReplaySubject or just a method ?
         public void OpenDetails() => Bloc.OpenDetails();
 
         //protected override HomeViewModelBloc CreateBloc() => new HomeViewModelBloc(xxx);
+        public void LogOut() => Bloc.LogOut();
     }
 
     // ViewModel Bloc Interface : (not mandatory) contains the State output, and other input methods
-    public interface IHomeViewModelBloc : IStatefulBloc<HomeViewModelState>
+    public interface IHomeViewModelBloc : IStatefulBloc<HomeViewModelState> //, ILogin
     {
         void OpenDetails();
+        void LogOut();
     }
 
-    // ViewModel Bloc : use to combine blocs into one testable 'viewmodel' bloc,
-    // so there is no logic in the viewmodel
-    public class HomeViewModelBloc : StatefulBloc<HomeViewModelState>, IHomeViewModelBloc
+    // ViewModel Bloc : used to combine blocs into one testable 'viewmodel' bloc,
+    // so there is no logic in the viewmodel, can be reused as an upper level bloc somewhere else
+    public class HomeViewModelBloc : BaseStatefulBloc<HomeViewModelState>, IHomeViewModelBloc
     {
-        //protected override HomeViewModelState CreateFirstState() => new HomeViewModelState();
+        private readonly ILoginBloc _loginBloc;
+        //protected override HomeViewModelState CreateInitialState() => new HomeViewModelState();
 
-        public HomeViewModelBloc()
+        public HomeViewModelBloc(ILoginBloc loginBloc)
         {
+            _loginBloc = loginBloc;
+
             // update the whole state
             Observable.Return(new HomeViewModelState { Title = "B" })
                 .Delay(TimeSpan.FromSeconds(3))
@@ -39,11 +45,11 @@ namespace MVxIRx.Core.ViewModels
             Observable.Return("C")
                 .Delay(TimeSpan.FromSeconds(5))
                 .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(SetStateProperty(s => s.Title))
+                .Subscribe(UpdateState(s => s.Title))
                 ;
 
             // other one-property syntax
-            SetStateProperty(s => s.ButtonLabel, "Click Me !!!");
+            UpdateState(s => s.ButtonLabel, "Click Me !!!");
 
             // updates multiple properties at once but will only call setstate() 1 time
             /*
@@ -70,6 +76,8 @@ namespace MVxIRx.Core.ViewModels
 
         // send to a stateful bloc that may be listened by a global mvvmcross navigator
         public void OpenDetails() => throw new NotImplementedException();
+
+        public void LogOut() => _loginBloc.LogOut();
     }
 
     // The States POCO

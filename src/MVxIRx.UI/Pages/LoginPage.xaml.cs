@@ -1,17 +1,13 @@
-﻿using System;
-using System.Diagnostics;
-using System.Reactive.Linq;
-using MvvmCross.Binding.BindingContext;
-using MvvmCross.Forms.Views;
-using MVxIRx.Core.ViewModels.Home;
+﻿using MvvmCross.Forms.Views;
+using MVxIRx.Core.ViewModels.Login;
 using Xamarin.Forms.Xaml;
 
 namespace MVxIRx.UI.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HomePage : MvxContentPage<HomeViewModel>
+    public partial class LoginPage : MvxContentPage<LoginViewModel>
     {
-        public HomePage()
+        public LoginPage()
         {
             InitializeComponent();
         }
@@ -19,6 +15,7 @@ namespace MVxIRx.UI.Pages
         protected override void OnViewModelSet()
         {
             base.OnViewModelSet();
+            loginButt.Clicked += (a,b) => ViewModel.LogIn(loginEditor.Text, passEditor.Text);
 
             /*if (Application.Current.MainPage is NavigationPage navigationPage)
             {
@@ -26,10 +23,11 @@ namespace MVxIRx.UI.Pages
                 navigationPage.BarBackgroundColor = (Color)Application.Current.Resources["PrimaryColor"];
             }*/
 
+            /*
             // bindings
 
-            var set = this.CreateBindingSet<HomePage, HomeViewModel>();
-            set.Bind(OpenDetailsButt)
+            var set = this.CreateBindingSet<LoginPage, LoginViewModel>();
+            set.Bind(loginButt)
                 .For(v => v.Text)
                 .To(vm => vm.State.ButtonLabel);
             set.Apply();
@@ -43,11 +41,7 @@ namespace MVxIRx.UI.Pages
                     Title = state.Title;
                     //butt.Text = state.ButtonLabel;
                 });
-
-            //
-
-            OpenDetailsButt.Clicked += (a,b) => ViewModel.OpenDetails();
-            LogOutButt.Clicked += (a,b) => ViewModel.LogOut();
+            */
         }
     }
 }

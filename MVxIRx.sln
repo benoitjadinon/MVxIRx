@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Solution Items", "!Solution Items", "{06CFCA23-55F8-45D7-AA28-D58A43750C43}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		notes.md = notes.md
 	EndProjectSection
 EndProject
 Global

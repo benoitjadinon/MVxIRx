@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reactive.Linq;
-using System.Reflection;
+using System.Threading.Tasks;
+using MvvmCross;
 
 namespace MVxIRx.Core.ViewModels
 {
@@ -14,9 +10,15 @@ namespace MVxIRx.Core.ViewModels
     {
         private TBloc _bloc;
         protected TBloc Bloc => _bloc ?? (_bloc = CreateBloc());
-        protected virtual TBloc CreateBloc() => (TBloc)Activator.CreateInstance(typeof(TBloc));
+        protected virtual TBloc CreateBloc()
+        {
+            if (Mvx.IoCProvider.CanResolve<TBloc>())
+                return Mvx.IoCProvider.Resolve<TBloc>();
+            else
+                return (TBloc)Activator.CreateInstance(typeof(TBloc));
+        }
 
-        public IObservable<TState> StateObservable { get; }
+        public IObservable<TState> StateObs { get; }
 
         private TState _state;
         public TState State
@@ -31,12 +33,19 @@ namespace MVxIRx.Core.ViewModels
 
         public BaseStatefulViewModel()
         {
-            StateObservable = Bloc.StateObservable;
+            StateObs = Bloc.StateObs;
+        }
 
-            //TODO : only subscribe if state is bound ? possible ?
-            StateObservable
+        public override void Prepare()
+        {
+            //FIXME : this is too late, but inside the constructor was too early
+            StateObs
                 .Subscribe(state => State = state)
                 ;
+        }
+
+        public override async Task Initialize()
+        {
         }
     }
 }

@@ -27,6 +27,13 @@
     - state to json for comparison or send to raygun
     - state is IEquatable ?
 
+- package by feature
+    - /login/
+        login(Navigation)Bloc.cs
+        loginView.cs
+        loginViewBloc.cs
+      /formsnavigator.cs
+
 - MVVM Issues
     - each property updates the view at own time
         - refresh after an error : loading == true AND error != nil
@@ -49,9 +56,13 @@
 	- `userBloc.onUserObs.Where(u => u == null).Subscribe(app.showLoginPage());`
 		- logout : `userBloc.logout() => user = null;` : will show the login screen
 
+- blocs can export LoadableStates
+    - multiple loadable states can be merged into the viewmodelbloc to group loadings together
+
 - TODO : debug.writeline a state could show hierarchy and values
 
 ##Pseudo-code
+
 ```csharp
 public enum Status {
     SUCCESS,

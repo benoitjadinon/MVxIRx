@@ -15,7 +15,7 @@ namespace MVxIRx.Droid.Views
     {
         protected override void RunAppStart(Bundle bundle)
         {
-            StartActivity(typeof(MainActivity));
+            //StartActivity(typeof(MainActivity));
             base.RunAppStart(bundle);
         }
     }
