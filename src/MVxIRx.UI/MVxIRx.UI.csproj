@@ -7,6 +7,7 @@
     <PackageReference Include="MvvmCross" Version="6.2.0" />
     <PackageReference Include="MvvmCross.CodeAnalysis" Version="6.2.0" />
     <PackageReference Include="MvvmCross.Forms" Version="6.2.0" />
+    <PackageReference Include="ReactiveUI.Events.XamForms" Version="8.7.2" />
     <PackageReference Include="System.Reactive" Version="4.1.0" />
     <PackageReference Include="Xamarin.Forms" Version="3.1.0.697729" />
   </ItemGroup>
@@ -23,10 +24,5 @@
     <Compile Update="Resources\Colors.xaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="ReactiveUI.Events.XamForms, Version=8.7.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\.nuget\packages\reactiveui.events.xamforms\8.7.2\lib\netstandard2.0\ReactiveUI.Events.XamForms.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

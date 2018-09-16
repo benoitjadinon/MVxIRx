@@ -24,10 +24,10 @@ namespace MVxIRx.Core.ViewModels.Login
 
         public void LogIn(string username, string password)
         {
-            if (true/*username == "test" && password == "test"*/)
+            if (true /*username == "Elon" && password == "xxx"*/)
                 SetState(new LoggedInState(username));
             else
-                SetState<LoginErrorState>();
+                SetState<LoginErrorState>(username);
         }
 
         public void LogOut() => SetState<LoggedOutState>();
@@ -36,21 +36,30 @@ namespace MVxIRx.Core.ViewModels.Login
 
     public interface IAuthState {}
 
-    public class LoggedInState : IAuthState
+    public class BaseAuthState : IAuthState
     {
         public string Username { get; private set; }
 
-        public LoggedInState(string username)
+        public BaseAuthState(string username)
         {
             Username = username;
         }
     }
 
-    public class LoginErrorState : LoggedOutState
+    public class LoggedInState : BaseAuthState
+    {
+        public LoggedInState(string username)
+            : base(username)
+        {
+        }
+    }
+
+    public class LoginErrorState : BaseAuthState
     {
         public Exception Exception { get; private set; }
 
-        public LoginErrorState(Exception exception = null)
+        public LoginErrorState(string username = null, Exception exception = null)
+            : base(username)
         {
             Exception = exception;
         }

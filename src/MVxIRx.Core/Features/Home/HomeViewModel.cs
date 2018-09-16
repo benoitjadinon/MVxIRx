@@ -7,20 +7,13 @@ using MVxIRx.Core.ViewModels.Login;
 namespace MVxIRx.Core.ViewModels.Home
 {
     // ViewModel : placeholder for the bloc and target for mvvmcross's viewmodel-based navigation
-    public class HomeViewModel : BaseStatefulViewModel<IHomeViewModelBloc, HomeViewModelState>, IHomeViewModelBloc
-    {
-        //TODO : Sinks : ReactiveCommand or ReplaySubject or just a method ?
-        public void OpenDetails() => Bloc.OpenDetails();
-
-        //protected override HomeViewModelBloc CreateBloc() => new HomeViewModelBloc(xxx);
-        public void LogOut() => Bloc.LogOut();
-    }
+    public class HomeViewModel : BaseStatefulViewModel<IHomeViewModelBloc, HomeViewModelState> { }
 
 
-    // ViewModel Bloc Interface : (not mandatory) contains the State output, and other input methods
+    // ViewModel Bloc Interface : (not mandatory) contains the State output, and other intent methods
     public interface IHomeViewModelBloc : IStatefulBloc<HomeViewModelState> //, ILogin
     {
-        void OpenDetails();
+        void OpenUserDetails();
         void LogOut();
     }
 
@@ -36,6 +29,12 @@ namespace MVxIRx.Core.ViewModels.Home
         {
             _authBloc = authBloc;
 
+            _authBloc.WhenState
+                .WhereAs<IAuthState, LoggedInState>()
+                .Select(s => s.Username)
+                .Select(s => $"{s} detail page")
+                .Subscribe(UpdateStateProperty(s => s.ButtonLabel));
+
             /*
             // update the whole state
             Observable.Return(new HomeViewModelState { Title = "B" })
@@ -48,34 +47,24 @@ namespace MVxIRx.Core.ViewModels.Home
             Observable.Return("C")
                 .Delay(TimeSpan.FromSeconds(5))
                 .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(UpdateState(s => s.Title))
+                .Subscribe(UpdateStateProperty(s => s.Title))
                 ;
 
             // other one-property syntax
-            UpdateState(s => s.ButtonLabel, "Click Me !!!");
-            */
-
-            _authBloc.WhenState
-                .WhereAs<IAuthState, LoggedInState>()
-                .Select(s => s.Username)
-                .Select(s => $"{s} detail page")
-                .Subscribe(UpdateState(s => s.ButtonLabel));
+            UpdateStateProperty(s => s.ButtonLabel, "Click Me !!!");
 
             // updates multiple properties at once but will only call setstate() 1 time
-            /*
-            SetStateProperties(state =>
+            UpdateStateProperties(state =>
             {
                 state.Title = "a";
                 state.ButtonLabel = "b";
                 return state;
             });
-            */
 
-            //SetState(new HomeViewModelState());
-            //SetState(new HomeViewModelState(error:e));
-            //SetState(new HomeViewModelState(data:obj));
+            SetState(new HomeViewModelState());
+            SetState(new HomeViewModelState(error:e));
+            SetState(new HomeViewModelState(data:obj));
 
-            /*
             // hardcoded values to test ui with states before having business logic
             SetState(new HomeViewModelState{
                 Title = "A Title",
@@ -84,22 +73,23 @@ namespace MVxIRx.Core.ViewModels.Home
             */
         }
 
-        // send to a stateful bloc that may be listened by a global mvvmcross navigator
-        public void OpenDetails() {} //_userBloc.SelectUser();
+        //TODO : Sinks/Intents : ReactiveCommand or ReplaySubject.OnNext or just a method ?
+        public void OpenUserDetails() { /*TODO*/ }
 
+        //protected override HomeViewModelBloc CreateBloc() => new HomeViewModelBloc(xxx);
         public void LogOut() => _authBloc.LogOut();
     }
 
 
     // The States POCOs
-    // TODO consider using structs (immutable) ?
+    // TODO consider using structs (immutable) ? (see immutable git branch)
     // TODO but they can only be created (not changed) from their constructors
     // TODO that would actually force grouping multiple smaller states
     // TODO and force using real states which may not be a bad thing
     public class HomeViewModelState
     {
         public string Title { get; set; } = "Home";
-        public string ButtonLabel { get; set; } = "-";
+        public string ButtonLabel { get; set; } = "loading...";
 
         public HomeViewModelState() {}
 
@@ -114,7 +104,5 @@ namespace MVxIRx.Core.ViewModels.Home
             Title = "OK";
             ButtonLabel = "Next";
         }
-
-        //public override string ToString() => this.GetType().Name;
     }
 }

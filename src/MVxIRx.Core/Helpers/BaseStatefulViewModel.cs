@@ -19,16 +19,18 @@ namespace MVxIRx.Core.ViewModels
     {
         private readonly IMvxIoCProvider _ioCProvider;
         private TBloc _bloc;
-        protected TBloc Bloc => _bloc ?? (_bloc = CreateBloc());
+        public TBloc Bloc => _bloc ?? (_bloc = CreateBloc());
         protected virtual TBloc CreateBloc()
         {
-            // injection
             if (_ioCProvider.CanResolve<TBloc>())
+                // injection
                 return _ioCProvider.Resolve<TBloc>();
-            //TODO fallback instatiation, not awesome
             else
+                // fallback instatiation
+                // TODO : not awesome
                 return (TBloc)Activator.CreateInstance(typeof(TBloc));
         }
+        public TBloc Intents => Bloc;
 
         // for Rx Subscribes
         public IObservable<TState> WhenState { get; }
@@ -80,12 +82,14 @@ namespace MVxIRx.Core.ViewModels
         }
     }
 
+
     public interface IHasCompositeDisposable
     {
         CompositeDisposable Disposables { get; }
     }
 
-    public static class StatefulVMExtensions
+
+    public static class StatefulViewModelExtensions
     {
         public static IDisposable DisposeWhenDisappearing(this IDisposable @this, IHasCompositeDisposable viewmodel)
         {

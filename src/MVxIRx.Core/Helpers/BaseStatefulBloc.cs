@@ -42,7 +42,7 @@ namespace MVxIRx.Core
 
             _stateSubject.Subscribe(state =>
             {
-                Debug.WriteLine($"State Added in {this.GetType().Name}:{state.GetType().Name} => {state.ToString()}");
+                Debug.WriteLine($"State Added in {this.GetType().Name} : {state.GetType().Name} => {state.PrettyPrint(indented:false)}");
                 if (_statesHistory.Count >= _statesHistoryLength)
                     _statesHistory.Dequeue();
                 _statesHistory.Enqueue(state);
@@ -55,13 +55,13 @@ namespace MVxIRx.Core
                 SetState(initialState);
         }
 
-        public void UpdateState(Func<TState, TState> stateAction)
+        public void UpdateStateProperties(Func<TState, TState> stateAction)
             => SetState(stateAction(GetLastState().Copy()));
 
-        public void UpdateState<TO>(Expression<Func<TState, TO>> stateProperty, TO @value)
-            => UpdateState(stateProperty)(@value);
+        public void UpdateStateProperty<TO>(Expression<Func<TState, TO>> stateProperty, TO @value)
+            => UpdateStateProperty(stateProperty)(@value);
 
-        public Action<TO> UpdateState<TO>(Expression<Func<TState, TO>> stateProperty)
+        public Action<TO> UpdateStateProperty<TO>(Expression<Func<TState, TO>> stateProperty)
         {
             return value =>
             {

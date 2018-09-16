@@ -16,6 +16,6 @@ namespace MVxIRx.UI.Pages
         }
 
         private void OnLoginClick(object sender, EventArgs e)
-            => ViewModel.LogIn(LoginEntry.Text, PassEntry.Text);
+            => ViewModel.Intents.LogIn(LoginEntry.Text, PassEntry.Text);
     }
 }

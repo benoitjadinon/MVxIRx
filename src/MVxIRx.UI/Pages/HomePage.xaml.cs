@@ -36,17 +36,21 @@ namespace MVxIRx.UI.Pages
             // or rx updates
 
             ViewModel.WhenState
-                .Debug(_ => _, _ => $"HomePage state : {_}")
-                .Select(s => s.ButtonLabel)
-                .Subscribe(s => DetailsButt.Text = s)
+                .Debug(st => st/*, st => $"HomePage state : {st.PrettyPrint()}"*/)
+                .Select(st => st.ButtonLabel)
+                .Subscribe(t => DetailsButt.Text = t)
                 .DisposeWhenDisappearing(ViewModel)
                 ;
 
             // intents
 
-            DetailsButt.Events().Clicked.Subscribe(_ => ViewModel.OpenDetails()).DisposeWhenDisappearing(ViewModel);
+            DetailsButt.Events().Clicked
+                .Subscribe(_ => ViewModel.Intents.OpenUserDetails())
+                .DisposeWhenDisappearing(ViewModel);
         }
 
-        private void OnLogoutClick(object sender, EventArgs e) => ViewModel.LogOut();
+        // from xaml
+        private void OnLogoutClick(object sender, EventArgs e)
+            => ViewModel.Intents.LogOut();
     }
 }

@@ -1,12 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MVxIRx.Core
 {
-    // https://github.com/Burtsev-Alexey/net-object-deep-copy/blob/master/ObjectExtensions.cs
     public static class ObjectExtensions
     {
+        public static string PrettyPrint<T>(this T @this, bool indented = true)
+            => JsonConvert.SerializeObject(@this, indented ? Formatting.Indented : Formatting.None, new StringEnumConverter());
+
+        #region Clone
+
+        // https://github.com/Burtsev-Alexey/net-object-deep-copy/blob/master/ObjectExtensions.cs
+
         private static readonly MethodInfo CloneMethod = typeof(Object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
         public static bool IsPrimitive(this Type type)
@@ -67,6 +75,8 @@ namespace MVxIRx.Core
         {
             return (T)Copy((Object)original);
         }
+
+        #endregion
     }
 
     public class ReferenceEqualityComparer : EqualityComparer<Object>

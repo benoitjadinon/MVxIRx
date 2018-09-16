@@ -2,16 +2,23 @@ using System;
 
 namespace MVxIRx.Core.ViewModels.Login
 {
-    public class LoginViewModel : BaseStatefulViewModel<ILoginViewModelBloc, LoginViewModelState>, IAuth
+    public class LoginViewModel : BaseStatefulViewModel<ILoginViewModelBloc, LoginViewModelState> { }
+
+
+    public interface ILoginViewModelBloc : IStatefulBloc<LoginViewModelState>, IAuth {}
+
+    // ViewModel Bloc : used to combine blocs into one testable 'viewmodel' bloc,
+    // so there is no logic in the viewmodel, can be reused as an upper level bloc somewhere else
+    public class LoginViewModelBloc : BaseStatefulBloc<LoginViewModelState>, ILoginViewModelBloc
     {
         private readonly IAuthBloc _authBloc;
 
-        public LoginViewModel(IAuthBloc authBloc)
+        public LoginViewModelBloc(IAuthBloc authBloc)
         {
             _authBloc = authBloc;
         }
 
-        #region ILogin
+        #region IAuth
 
         public void LogIn(string username, string password) => _authBloc.LogIn(username, password);
 
@@ -19,13 +26,6 @@ namespace MVxIRx.Core.ViewModels.Login
 
         #endregion
     }
-
-
-    public interface ILoginViewModelBloc : IStatefulBloc<LoginViewModelState>{}
-
-    // ViewModel Bloc : used to combine blocs into one testable 'viewmodel' bloc,
-    // so there is no logic in the viewmodel, can be reused as an upper level bloc somewhere else
-    public class LoginViewModelBloc : BaseStatefulBloc<LoginViewModelState>, ILoginViewModelBloc {}
 
 
     public class LoginViewModelState
