@@ -24,4 +24,9 @@
       <DependentUpon>%(Filename)</DependentUpon>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ReactiveUI.Events.XamForms, Version=8.7.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\.nuget\packages\reactiveui.events.xamforms\8.7.2\lib\netstandard2.0\ReactiveUI.Events.XamForms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

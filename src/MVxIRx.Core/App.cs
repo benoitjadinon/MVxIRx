@@ -31,7 +31,6 @@ namespace MVxIRx.Core
                 .RegisterAsLazySingleton();
 
             RegisterCustomAppStart<AppNavigator>();
-            //RegisterAppStart<HomeViewModel>();
         }
     }
 
@@ -45,20 +44,18 @@ namespace MVxIRx.Core
         {
             _appBloc = appBloc;
 
-            _appBloc.StateObs
+            _appBloc.WhenState
                 .Select(state => state is AppHomeState
                     ? typeof(HomeViewModel)
                     : typeof(LoginViewModel)
                 )
                 .Subscribe(type => NavigationService.Navigate(type))
-                //.SubscribeWithExceptionCatching(type => NavigationService.Navigate(type),
-                //    new ExceptionCatcher(err => Debug.WriteLine(err), continueOnError:true))
                 ;
         }
 
         protected override async Task NavigateToFirstViewModel(object hint = null)
         {
-            //FIXME : ugly hack because the async code below is too slow for ios that promptly needs a view to display
+            //FIXME : ugly hack because the observing code below is too 'slow' for ios that promptly needs a view to display
             await NavigationService.Navigate<SplashViewModel>();
 
             /*
@@ -88,14 +85,13 @@ namespace MVxIRx.Core
 
     public class AppBloc : BaseStatefulBloc<IAppState>, IAppBloc
     {
-        public AppBloc(ILoginBloc loginBloc)
+        public AppBloc(IAuthBloc authBloc)
         {
-            loginBloc.StateObs
+            authBloc.WhenState
                 .Select(@is => (@is is LoggedOutState)
                     ? (IAppState)new AppLogInState()
                     : (IAppState)new AppHomeState()
                 )
-                //.DistinctUntilChanged(a => a)
                 .Subscribe(SetState);
         }
     }

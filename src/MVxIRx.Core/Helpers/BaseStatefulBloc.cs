@@ -13,8 +13,7 @@ namespace MVxIRx.Core
     public interface IHasState<TState>
         where TState : class
     {
-        //TState State { get; }
-        IObservable<TState> StateObs { get; }
+        IObservable<TState> WhenState { get; }
     }
 
     public interface IStatefulBloc<TState> : IHasState<TState>
@@ -31,7 +30,7 @@ namespace MVxIRx.Core
         private readonly Queue<TState> _statesHistory; //TODO: thread safe
 
         private readonly ReplaySubject<TState> _stateSubject;
-        public IObservable<TState> StateObs { get; private set; }
+        public IObservable<TState> WhenState { get; private set; }
 
         protected BaseStatefulBloc(TState initialState = null, int statesHistoryLength = 4)
         {
@@ -39,7 +38,7 @@ namespace MVxIRx.Core
             _statesHistory = new Queue<TState>(statesHistoryLength);
 
             _stateSubject = new ReplaySubject<TState>(1);
-            StateObs = _stateSubject.AsObservable();
+            WhenState = _stateSubject.AsObservable();
 
             _stateSubject.Subscribe(state =>
             {
@@ -64,14 +63,14 @@ namespace MVxIRx.Core
 
         public Action<TO> UpdateState<TO>(Expression<Func<TState, TO>> stateProperty)
         {
-            return @value =>
+            return value =>
             {
                 var memberExpression = (MemberExpression)stateProperty.Body;
                 var property = (PropertyInfo)memberExpression.Member;
 
                 TState newState = GetLastState().Copy();
 
-                property.SetValue(newState, @value, null);
+                property.SetValue(newState, value, null);
 
                 SetState(newState);
             };
@@ -80,9 +79,9 @@ namespace MVxIRx.Core
         public void SetState()
             => SetState<TState>();
 
-        public void SetState<T>()
+        public void SetState<T>(params object[] @params)
             where T:TState
-            => SetState((T)Activator.CreateInstance(typeof(T)));
+            => SetState((T)Activator.CreateInstance(typeof(T), @params));
 
         public void SetState(TState state)
             => _stateSubject.OnNext(state);

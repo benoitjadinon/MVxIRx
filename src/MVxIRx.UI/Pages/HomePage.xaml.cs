@@ -4,7 +4,10 @@ using System.Reactive.Linq;
 using MvvmCross.Binding.BindingContext;
 using MvvmCross.Forms.Presenters.Attributes;
 using MvvmCross.Forms.Views;
+using MVxIRx.Core;
+using MVxIRx.Core.ViewModels;
 using MVxIRx.Core.ViewModels.Home;
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace MVxIRx.UI.Pages
@@ -18,38 +21,32 @@ namespace MVxIRx.UI.Pages
             InitializeComponent();
         }
 
-        protected override void OnViewModelSet()
+        protected override void OnAppearing()
         {
-            base.OnViewModelSet();
-
-            /*if (Application.Current.MainPage is NavigationPage navigationPage)
-            {
-                navigationPage.BarTextColor = Color.White;
-                navigationPage.BarBackgroundColor = (Color)Application.Current.Resources["PrimaryColor"];
-            }*/
+            base.OnAppearing();
 
             // bindings
 
             var set = this.CreateBindingSet<HomePage, HomeViewModel>();
-            set.Bind(OpenDetailsButt)
-                .For(v => v.Text)
-                .To(vm => vm.State.ButtonLabel);
+            set.Bind(this)
+                .For(v => v.Title)
+                .To(vm => vm.State.Title);
             set.Apply();
 
             // or rx updates
 
-            ViewModel.StateObs
-                .Do(state => Debug.WriteLine(state))
-                .Subscribe(state =>
-                {
-                    Title = state.Title;
-                    //butt.Text = state.ButtonLabel;
-                });
+            ViewModel.WhenState
+                .Debug(_ => _, _ => $"HomePage state : {_}")
+                .Select(s => s.ButtonLabel)
+                .Subscribe(s => DetailsButt.Text = s)
+                .DisposeWhenDisappearing(ViewModel)
+                ;
 
-            //
+            // intents
 
-            OpenDetailsButt.Clicked += (a,b) => ViewModel.OpenDetails();
-            LogOutButt.Clicked += (a,b) => ViewModel.LogOut();
+            DetailsButt.Events().Clicked.Subscribe(_ => ViewModel.OpenDetails()).DisposeWhenDisappearing(ViewModel);
         }
+
+        private void OnLogoutClick(object sender, EventArgs e) => ViewModel.LogOut();
     }
 }

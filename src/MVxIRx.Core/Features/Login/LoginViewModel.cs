@@ -2,20 +2,20 @@ using System;
 
 namespace MVxIRx.Core.ViewModels.Login
 {
-    public class LoginViewModel : BaseStatefulViewModel<ILoginViewModelBloc, LoginViewModelState>, ILogin
+    public class LoginViewModel : BaseStatefulViewModel<ILoginViewModelBloc, LoginViewModelState>, IAuth
     {
-        private readonly ILoginBloc _loginBloc;
+        private readonly IAuthBloc _authBloc;
 
-        public LoginViewModel(ILoginBloc loginBloc)
+        public LoginViewModel(IAuthBloc authBloc)
         {
-            _loginBloc = loginBloc;
+            _authBloc = authBloc;
         }
 
         #region ILogin
 
-        public void LogIn(string username, string password) => _loginBloc.LogIn(username, password);
+        public void LogIn(string username, string password) => _authBloc.LogIn(username, password);
 
-        public void LogOut() => _loginBloc.LogOut();
+        public void LogOut() => _authBloc.LogOut();
 
         #endregion
     }

@@ -8,4 +8,9 @@
     <PackageReference Include="MvvmCross.CodeAnalysis" Version="6.2.0" />
     <PackageReference Include="System.Reactive" Version="4.1.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MvvmCross.Forms, Version=6.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\.nuget\packages\mvvmcross.forms\6.2.0\lib\netstandard2.0\MvvmCross.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

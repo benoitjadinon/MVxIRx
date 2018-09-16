@@ -9,17 +9,15 @@
     x:Class="MVxIRx.UI.Pages.HomePage"
     xmlns:viewModels="clr-namespace:MVxIRx.Core.ViewModels.Home;assembly=MVxIRx.Core"
     Title="Home">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Name="LogoutButt" Order="Primary" Text="Log Out" Priority="0" Clicked="OnLogoutClick" />
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>
-            <Button x:Name="OpenDetailsButt"
+            <Button x:Name="DetailsButt"
                     VerticalOptions="Center" 
                     HorizontalOptions="CenterAndExpand"
                     />
-            <Button x:Name="LogOutButt"
-                    Text="Log Out"
-                    VerticalOptions="Center" 
-                    HorizontalOptions="CenterAndExpand"
-            />
         </StackLayout>
     </ContentPage.Content>
 </views:MvxContentPage>

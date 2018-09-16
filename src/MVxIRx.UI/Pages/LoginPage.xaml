@@ -8,19 +8,19 @@
     xmlns:mvx="clr-namespace:MvvmCross.Forms.Bindings;assembly=MvvmCross.Forms"
     xmlns:local="clr-namespace:MVxIRx.UI.Pages"
     xmlns:viewModels="clr-namespace:MVxIRx.Core.ViewModels.Login;assembly=MVxIRx.Core"
-    Title="LOG IN"
+    Title="AUTHENTICATION"
     >
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Name="LoginButt" Order="Primary" Text="Log In" Priority="0" Clicked="OnLoginClick" />
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>
-            <Editor x:Name="loginEditor"
-                    Text="test" />
-            <Editor x:Name="passEditor"
-                    Text="test" />
-            <Button x:Name="loginButt"
-                    VerticalOptions="Center" 
-                    HorizontalOptions="CenterAndExpand"
-                    Text="LOG IN"
-            />
+            <Entry x:Name="LoginEntry"
+                   Text="Elon" />
+            <Entry x:Name="PassEntry"
+                   Text="BigFreakinRocketz"
+                   IsPassword="true"
+                   />
         </StackLayout>
     </ContentPage.Content>
 </views:MvxContentPage>

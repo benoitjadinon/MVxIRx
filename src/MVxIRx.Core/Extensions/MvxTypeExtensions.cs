@@ -7,7 +7,7 @@ namespace MVxIRx.Core
 {
     public static class MvxTypeExtensions
     {
-        //TODO : add interfaces inside concrete type pairs
+        //TODO : add interfaces AND concrete type pairs and point to same instance
         /*
         public static IEnumerable<MvvmCross.IoC.MvxTypeExtensions.ServiceTypeAndImplementationTypePair> AsTypesAndInterfaces(this IEnumerable<Type> types)
         {

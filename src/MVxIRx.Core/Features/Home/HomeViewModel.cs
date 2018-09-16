@@ -16,6 +16,7 @@ namespace MVxIRx.Core.ViewModels.Home
         public void LogOut() => Bloc.LogOut();
     }
 
+
     // ViewModel Bloc Interface : (not mandatory) contains the State output, and other input methods
     public interface IHomeViewModelBloc : IStatefulBloc<HomeViewModelState> //, ILogin
     {
@@ -23,17 +24,19 @@ namespace MVxIRx.Core.ViewModels.Home
         void LogOut();
     }
 
+
     // ViewModel Bloc : used to combine blocs into one testable 'viewmodel' bloc,
     // so there is no logic in the viewmodel, can be reused as an upper level bloc somewhere else
     public class HomeViewModelBloc : BaseStatefulBloc<HomeViewModelState>, IHomeViewModelBloc
     {
-        private readonly ILoginBloc _loginBloc;
+        private readonly IAuthBloc _authBloc;
         //protected override HomeViewModelState CreateInitialState() => new HomeViewModelState();
 
-        public HomeViewModelBloc(ILoginBloc loginBloc)
+        public HomeViewModelBloc(IAuthBloc authBloc)
         {
-            _loginBloc = loginBloc;
+            _authBloc = authBloc;
 
+            /*
             // update the whole state
             Observable.Return(new HomeViewModelState { Title = "B" })
                 .Delay(TimeSpan.FromSeconds(3))
@@ -50,6 +53,13 @@ namespace MVxIRx.Core.ViewModels.Home
 
             // other one-property syntax
             UpdateState(s => s.ButtonLabel, "Click Me !!!");
+            */
+
+            _authBloc.WhenState
+                .WhereAs<IAuthState, LoggedInState>()
+                .Select(s => s.Username)
+                .Select(s => $"{s} detail page")
+                .Subscribe(UpdateState(s => s.ButtonLabel));
 
             // updates multiple properties at once but will only call setstate() 1 time
             /*
@@ -75,19 +85,20 @@ namespace MVxIRx.Core.ViewModels.Home
         }
 
         // send to a stateful bloc that may be listened by a global mvvmcross navigator
-        public void OpenDetails() => throw new NotImplementedException();
+        public void OpenDetails() {} //_userBloc.SelectUser();
 
-        public void LogOut() => _loginBloc.LogOut();
+        public void LogOut() => _authBloc.LogOut();
     }
 
-    // The States POCO
+
+    // The States POCOs
     // TODO consider using structs (immutable) ?
     // TODO but they can only be created (not changed) from their constructors
     // TODO that would actually force grouping multiple smaller states
     // TODO and force using real states which may not be a bad thing
     public class HomeViewModelState
     {
-        public string Title { get; set; } = "...";
+        public string Title { get; set; } = "Home";
         public string ButtonLabel { get; set; } = "-";
 
         public HomeViewModelState() {}
@@ -104,6 +115,6 @@ namespace MVxIRx.Core.ViewModels.Home
             ButtonLabel = "Next";
         }
 
-        public override string ToString() => Title;
+        //public override string ToString() => this.GetType().Name;
     }
 }
